@@ -87,7 +87,8 @@ func summaryCmd() *cobra.Command {
 
 				generated := generateSections(cmd, ctx.Config, ctx.Repo.DisplayName, payload, noAI, offline)
 
-				markdown := report.RenderWithOptions(report.BuildInitialWithIncludedCommits(ctx.Repo, activity, generated, payload.Commits), report.RenderOptions{Detail: detail})
+				reportModel := report.BuildInitialWithIncludedCommits(ctx.Repo, activity, generated, payload.Commits)
+				markdown := report.RenderWithOptions(reportModel, report.RenderOptions{Detail: detail})
 				if err := writeSummary(cmd, markdown, output, outputOptions); err != nil {
 					return err
 				}
@@ -272,5 +273,5 @@ func isTerminal(file any) bool {
 	if err != nil {
 		return false
 	}
-	return info.Mode()&os.ModeCharDevice != 0
+	return info.Mode()&os.ModeCharDevice != 0 && f.Name() != os.DevNull
 }

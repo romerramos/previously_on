@@ -44,6 +44,18 @@ func TestInstallBlockAppendsAndReplacesManagedBlock(t *testing.T) {
 	}
 }
 
+func TestManagedBlockRendersTemplate(t *testing.T) {
+	block := managedBlock("/tmp/previously-on")
+	for _, unwanted := range []string{"{{MANAGED_START}}", "{{EXECUTABLE}}", "{{MANAGED_END}}"} {
+		if strings.Contains(block, unwanted) {
+			t.Fatalf("managed block still contains placeholder %q:\n%s", unwanted, block)
+		}
+	}
+	if !strings.Contains(block, managedStart) || !strings.Contains(block, managedEnd) || !strings.Contains(block, "'/tmp/previously-on' summary --simple") {
+		t.Fatalf("unexpected managed block:\n%s", block)
+	}
+}
+
 func TestUninstallBlockRemovesOnlyManagedBlock(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "post-merge")
 	content := "#!/bin/sh\necho existing\n\n" + managedBlock("/tmp/previously-on")

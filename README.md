@@ -14,6 +14,28 @@ It is meant to feel like a repo-specific changelog: short, factual, and useful w
 - Uses AI when configured, with a non-AI factual fallback.
 - Can install local Git hooks to show a briefing after successful merge/rebase from pulls.
 
+## Install
+
+Install the latest release:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/romerramos/previously_on/main/install.sh | sh
+```
+
+Install to a custom directory:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/romerramos/previously_on/main/install.sh | sh -s -- --dir ~/.local/bin
+```
+
+Install a specific version:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/romerramos/previously_on/main/install.sh | sh -s -- --version v0.1.0
+```
+
+If the installer uses `~/.local/bin`, make sure that directory is in your `PATH`.
+
 ## Install For Development
 
 Requirements:
@@ -212,6 +234,43 @@ previously-on uninstall git-hook
 
 The installer does not overwrite existing hooks. It appends a managed block and later removes only that block.
 
+## Neovim Integration
+
+Install the native Neovim package:
+
+```bash
+previously-on install nvim --strategy native
+```
+
+This writes a managed plugin to Neovim's package path under `~/.local/share/nvim/site/pack/previously-on/start/previously-on.nvim/`.
+
+If you use `lazy.nvim` or LazyVim with `noloadplugins`, install with the lazy strategy instead:
+
+```bash
+previously-on install nvim --strategy lazy
+```
+
+The lazy strategy writes the same managed plugin package plus a managed local plugin spec under `~/.config/nvim/lua/plugins/previously-on.lua`.
+
+If `--strategy` is omitted, the installer opens a small picker so you can choose the package strategy. In scripts, pass `--strategy native` or `--strategy lazy` explicitly.
+
+When Neovim opens inside a Git repository, the plugin opens a scratch Markdown buffer named `previously-on://summary.md`. The buffer is treated as Markdown and is not written to disk.
+
+Useful Neovim commands:
+
+```vim
+:PreviouslyOn
+:PreviouslyOnRefresh
+```
+
+The plugin runs `previously-on summary --raw --no-mark-seen --simple`, so opening Neovim does not update the repo's last-seen state.
+
+Uninstall the managed plugin:
+
+```bash
+previously-on uninstall nvim
+```
+
 ## Privacy
 
 Avoids sending full source code to AI providers.
@@ -252,7 +311,25 @@ $XDG_CONFIG_HOME/previously-on/config.json
 - First run summarizes recent repo history, then stores a baseline. Later runs summarize only changes since that baseline.
 - If the stored baseline commit disappears because of rebases, shallow clones, or rewritten history, the tool falls back to timestamp-based inspection.
 - Git hook support covers merge/rebase flows through `post-merge` and `post-rewrite`; Git has no standard `post-fetch` hook.
-- VS Code and Neovim integrations are planned but not implemented yet.
+
+## Releasing
+
+Releases are built by GitHub Actions when a version tag is pushed.
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+The release workflow runs tests, builds Linux and macOS binaries for `amd64` and `arm64`, creates a GitHub Release, and uploads archives plus `checksums.txt`.
+
+The public installer downloads those release assets:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/romerramos/previously_on/main/install.sh | sh
+```
+
+Do not commit built binaries to the repository. Release binaries belong in GitHub Releases.
 
 ## Development
 

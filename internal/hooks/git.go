@@ -2,6 +2,7 @@ package hooks
 
 import (
 	"bytes"
+	_ "embed"
 	"fmt"
 	"os"
 	"os/exec"
@@ -13,6 +14,9 @@ const (
 	managedStart = "# >>> previously-on"
 	managedEnd   = "# <<< previously-on"
 )
+
+//go:embed templates/git_hook.sh
+var gitHookTemplate string
 
 var gitHookNames = []string{"post-merge", "post-rewrite"}
 
@@ -120,21 +124,12 @@ func uninstallBlock(path, name string) (Result, error) {
 }
 
 func managedBlock(executable string) string {
-	return fmt.Sprintf(`%s
-if [ -n "$PREVIOUSLY_ON_SKIP_HOOK" ]; then
-  exit 0
-fi
-
-if [ ! -t 1 ]; then
-  exit 0
-fi
-
-repo_root="$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
-cd "$repo_root" || exit 0
-
-%s summary --simple
-%s
-`, managedStart, shellQuote(executable), managedEnd)
+	replacer := strings.NewReplacer(
+		"{{MANAGED_START}}", managedStart,
+		"{{EXECUTABLE}}", shellQuote(executable),
+		"{{MANAGED_END}}", managedEnd,
+	)
+	return replacer.Replace(gitHookTemplate)
 }
 
 func replaceManagedBlock(content, block string) string {

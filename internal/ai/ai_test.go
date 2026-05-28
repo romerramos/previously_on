@@ -2,6 +2,16 @@ package ai
 
 import "testing"
 
+func TestSystemPromptUsesEmbeddedPrompt(t *testing.T) {
+	prompt := SystemPrompt()
+	if prompt == "" {
+		t.Fatal("expected system prompt")
+	}
+	if prompt[0] == '\n' || prompt[len(prompt)-1] == '\n' {
+		t.Fatalf("system prompt should be trimmed: %q", prompt)
+	}
+}
+
 func TestParseGeneratedSectionsFiltersUnsafeCommands(t *testing.T) {
 	sections, err := ParseGeneratedSections(`{
   "tldr": "Jack updated billing.",
