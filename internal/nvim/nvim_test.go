@@ -36,7 +36,7 @@ func TestInstallAtCreatesPlugin(t *testing.T) {
 		`local executable = "/tmp/previously-on"`,
 		`vim.api.nvim_create_buf(false, true)`,
 		`vim.bo[summary_buf].filetype = "markdown"`,
-		`"summary", "--raw", "--no-mark-seen", "--simple"`,
+		`"summary", "--raw", "--simple"`,
 		`Previously on summary available. Run :PreviouslyOn or <leader>po.`,
 		`vim.api.nvim_create_user_command("PreviouslyOn"`,
 		`vim.keymap.set("n", "<leader>po"`,

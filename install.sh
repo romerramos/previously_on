@@ -5,16 +5,18 @@ REPO="romerramos/previously_on"
 BIN_NAME="previously-on"
 VERSION="latest"
 INSTALL_DIR="${PREVIOUSLY_ON_INSTALL_DIR:-}"
+SKIP_CONNECT="${PREVIOUSLY_ON_SKIP_CONNECT:-}"
 
 usage() {
   cat <<'EOF'
 Install previously-on from GitHub Releases.
 
 Usage:
-  install.sh [--version v0.1.0] [--dir /usr/local/bin]
+  install.sh [--version v0.1.0] [--dir /usr/local/bin] [--no-connect]
 
 Environment:
   PREVIOUSLY_ON_INSTALL_DIR  Install destination when --dir is not provided.
+  PREVIOUSLY_ON_SKIP_CONNECT Skip AI provider setup when set to 1.
 EOF
 }
 
@@ -35,6 +37,10 @@ while [ "$#" -gt 0 ]; do
         exit 1
       fi
       shift 2
+      ;;
+    --no-connect)
+      SKIP_CONNECT="1"
+      shift
       ;;
     -h|--help)
       usage
@@ -121,6 +127,14 @@ cp "$tmpdir/$BIN_NAME" "$INSTALL_DIR/$BIN_NAME"
 chmod 0755 "$INSTALL_DIR/$BIN_NAME"
 
 echo "Installed $BIN_NAME to $INSTALL_DIR/$BIN_NAME"
+if [ "$SKIP_CONNECT" != "1" ]; then
+  echo
+  echo "Set up an AI provider now, or cancel and run '$BIN_NAME connect' later."
+  if ! "$INSTALL_DIR/$BIN_NAME" connect; then
+    echo "AI provider setup skipped. Run '$BIN_NAME connect' when you are ready." >&2
+  fi
+fi
+
 case ":$PATH:" in
   *":$INSTALL_DIR:"*) ;;
   *) echo "Warning: $INSTALL_DIR is not in your PATH" >&2 ;;
@@ -130,5 +144,6 @@ cat <<EOF
 
 Next:
   $BIN_NAME summary
+  $BIN_NAME connect
   $BIN_NAME install nvim --strategy lazy
 EOF

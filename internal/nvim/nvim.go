@@ -9,8 +9,10 @@ import (
 	"strings"
 )
 
-const pluginRelativePath = "site/pack/previously-on/start/previously-on.nvim/plugin/previously_on.lua"
-const lazySpecRelativePath = "lua/plugins/previously-on.lua"
+const (
+	pluginRelativePath   = "site/pack/previously-on/start/previously-on.nvim/plugin/previously_on.lua"
+	lazySpecRelativePath = "lua/plugins/previously-on.lua"
+)
 
 //go:embed templates/previously_on.lua
 var pluginTemplate string

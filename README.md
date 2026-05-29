@@ -36,6 +36,41 @@ curl -fsSL https://raw.githubusercontent.com/romerramos/previously_on/main/insta
 
 If the installer uses `~/.local/bin`, make sure that directory is in your `PATH`.
 
+After installing the binary, the installer runs `previously-on connect` so you can configure an AI provider. To skip provider setup during install:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/romerramos/previously_on/main/install.sh | sh -s -- --no-connect
+```
+
+You can also skip provider setup with `PREVIOUSLY_ON_SKIP_CONNECT=1`.
+
+Update by running the installer again. It overwrites the existing binary in the target directory:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/romerramos/previously_on/main/install.sh | sh
+```
+
+Uninstall the binary:
+
+```bash
+rm "$(command -v previously-on)"
+```
+
+If you installed to the default user path, you can also remove it directly:
+
+```bash
+rm ~/.local/bin/previously-on
+```
+
+Optional cleanup:
+
+```bash
+previously-on uninstall nvim
+previously-on uninstall git-hook
+previously-on disconnect --all
+previously-on reset --all
+```
+
 ## Install For Development
 
 Requirements:
@@ -263,7 +298,7 @@ Useful Neovim commands:
 :PreviouslyOnRefresh
 ```
 
-The plugin runs `previously-on summary --raw --no-mark-seen --simple`, so opening Neovim does not update the repo's last-seen state.
+The plugin runs `previously-on summary --raw --simple`, so opening Neovim updates the repo's last-seen state after generating the summary.
 
 Uninstall the managed plugin:
 

@@ -87,12 +87,12 @@ func defaultConfig() (Config, error) {
 		AI: AIConfig{
 			Enabled:  true,
 			Provider: "openai",
-			Model:    "gpt-4.1-mini",
+			Model:    "gpt-5.4-nano",
 			Models: map[string]string{
-				"openai":     "gpt-4.1-mini",
-				"anthropic":  "claude-3-5-haiku-latest",
-				"gemini":     "gemini-2.5-flash",
-				"openrouter": "openai/gpt-4o-mini",
+				"openai":     "gpt-5.4-nano",
+				"anthropic":  "claude-haiku-4-5",
+				"gemini":     "gemini-3.5-flash",
+				"openrouter": "gpt-5.4-nano",
 				"ollama":     "llama3.2",
 			},
 		},
